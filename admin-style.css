@@ -1616,6 +1616,19 @@ font-size: 14px;
 line-height: 1.5;
 }
 
+.wizard-radio-row label input[type="radio"] {
+flex: 0 0 auto;
+
+margin-top: 3px;
+}
+
+.wizard-radio-text {
+flex: 1 1 0;
+min-width: 0;
+
+white-space: normal;
+}
+
 .wizard-staff-row,
 .wizard-menu-row {
 display: flex;
@@ -1704,6 +1717,9 @@ color: var(--sub-text-color);
 
 font-size: 14px;
 font-weight: 600;
+
+white-space: nowrap;
+flex-shrink: 0;
 
 cursor: pointer;
 
