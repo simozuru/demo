@@ -1639,13 +1639,19 @@ margin-bottom: 8px;
 }
 
 .wizard-staff-row input,
-.wizard-menu-row input {
+.wizard-menu-row input,
+.wizard-staff-row select {
 padding: 8px 10px;
 
 border: 1px solid var(--border-color);
 border-radius: var(--radius-sm);
 
 font-size: 14px;
+}
+
+.wizard-staff-row .wizard-date-range-label-input {
+flex: 1 1 auto;
+min-width: 0;
 }
 
 .wizard-staff-row .wizard-staff-name-input {

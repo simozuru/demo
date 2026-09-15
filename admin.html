@@ -935,7 +935,7 @@
     <!-- STEP1：店舗名 -->
     <div class="wizard-panel" data-wizard-panel="1">
       <h3 class="wizard-panel-title">まず、お店の名前を教えてください</h3>
-      <p class="settings-card-note">Googleカレンダーの予定名や、お客様へのメールの件名に使われます。ここで入力した名前は、あとから「メール」タブでいつでも変更できます。</p>
+      <p class="settings-card-note">Googleカレンダーの予定名や、お客様へのメールの件名に使われます。後から設定で変更可。</p>
       <div class="form-group">
         <label for="wizard-salon-name">店舗名</label>
         <input type="text" id="wizard-salon-name" placeholder="例：美容室〇〇">
@@ -949,7 +949,7 @@
     <!-- STEP2：営業時間・定休日 -->
     <div class="wizard-panel" data-wizard-panel="2" style="display: none;">
       <h3 class="wizard-panel-title">営業時間を教えてください</h3>
-      <p class="settings-card-note">まずは全曜日共通の時間で設定します。曜日ごとに個別の時間にしたい場合は、あとから「営業時間」タブで変更できます。</p>
+      <p class="settings-card-note">全曜日共通の時間で設定します。曜日ごと個別の時間に設定したい場合は、あとから変更できます。</p>
       <div class="form-group">
         <label>開店時刻 〜 閉店時刻</label>
         <div class="wizard-time-row" id="wizard-time-row"></div>
@@ -965,8 +965,21 @@
           <label><input type="checkbox" class="wizard-weekday-check" value="5"> 金</label>
           <label><input type="checkbox" class="wizard-weekday-check" value="6"> 土</label>
         </div>
-        <p class="settings-card-note">選んだ曜日は、自動で作成する「定休日カレンダー」に、毎週繰り返しの休みとして登録されます。Googleカレンダーの画面を開く必要はありません。</p>
+        <p class="settings-card-note">「定休日カレンダー」に、毎週繰り返しの定休日、もしくは休暇として登録されます。</p>
       </div>
+
+      <div class="form-group">
+        <label>第○曜日の定休日（任意。毎週の定休日とは別に、「第2火曜日」のような変則の休みがあれば追加してください）</label>
+        <div id="wizard-nth-weekday-rows"></div>
+        <button type="button" id="wizard-add-nth-weekday-btn" class="btn-add-row">＋ 第○曜日の定休日を追加</button>
+      </div>
+
+      <div class="form-group">
+        <label>年末年始・夏季休暇など（任意。期間で指定できます）</label>
+        <div id="wizard-date-range-rows"></div>
+        <button type="button" id="wizard-add-date-range-btn" class="btn-add-row">＋ 休暇期間を追加</button>
+      </div>
+
       <div class="wizard-buttons">
         <button type="button" class="btn-link" id="wizard-step2-back">戻る</button>
         <button type="button" class="btn-save-settings" id="wizard-step2-next">次へ</button>
@@ -975,17 +988,16 @@
 
     <!-- STEP3：スタッフ -->
     <div class="wizard-panel" data-wizard-panel="3" style="display: none;">
-      <h3 class="wizard-panel-title">スタッフについて教えてください</h3>
+      <h3 class="wizard-panel-title">営業形態について</h3>
       <div class="form-group">
-        <label>スタッフは何人ですか？</label>
         <div class="wizard-radio-row">
-          <label><input type="radio" name="wizard-staff-mode" value="solo" checked><span class="wizard-radio-text">1人（自分だけ）</span></label>
-          <label><input type="radio" name="wizard-staff-mode" value="multi"><span class="wizard-radio-text">複数人</span></label>
+          <label><input type="radio" name="wizard-staff-mode" value="solo" checked><span class="wizard-radio-text">一人営業</span></label>
+          <label><input type="radio" name="wizard-staff-mode" value="multi"><span class="wizard-radio-text">複数人営業</span></label>
         </div>
       </div>
       <div id="wizard-staff-rows"></div>
       <button type="button" id="wizard-add-staff-btn" class="btn-add-row" style="display: none;">＋ スタッフを追加</button>
-      <p class="settings-card-note">名前は、自動で作成するGoogleカレンダーの名前としても使われます。Googleカレンダーの画面を開く必要はありません。</p>
+      <p class="settings-card-note">名前は、自動で作成するGoogleカレンダーの名前としても使われます。</p>
       <div class="wizard-buttons">
         <button type="button" class="btn-link" id="wizard-step3-back">戻る</button>
         <button type="button" class="btn-save-settings" id="wizard-step3-next">次へ</button>
@@ -1005,7 +1017,7 @@
       </div>
       <div id="wizard-menu-rows"></div>
       <button type="button" id="wizard-add-menu-btn" class="btn-add-row">＋ メニューを追加</button>
-      <p class="settings-card-note">メニュー名・施術時間は必須です。金額は空欄でもかまいません（1つも入力しなければ、お客様側には金額欄自体を表示しません）。</p>
+      <p class="settings-card-note">メニュー名・施術時間は必須項目、金額は任意です。後から設定で変更可</p>
       <div class="wizard-buttons">
         <button type="button" class="btn-link" id="wizard-step4-back">戻る</button>
         <button type="button" class="btn-save-settings" id="wizard-step4-next">次へ</button>
