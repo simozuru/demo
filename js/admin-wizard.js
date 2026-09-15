@@ -25,18 +25,48 @@ const WIZARD_NEXT_STEPS = [
   { title: 'ページ編集', text: 'トップページ下の「Information」カードの内容を編集できます（「ページ編集」タブ）' }
 ];
 
+let isDemoModeActive = false;
+
 /**
  * ログイン直後に呼ばれる。スタッフ・メニューが1件も登録されていなければ、自動でウィザードを開く
+ * デモモードの場合は、離脱時（画面を閉じる・タブを移動する等）に自動でデータをリセットする準備もする
  */
 async function checkAndShowSetupWizard() {
   try {
     const result = await callAdminApi('checkSetupWizardStatus');
+
+    isDemoModeActive = !!result.demoMode;
+    if (isDemoModeActive) _setupDemoModeAutoReset();
+
     if (result.success && result.needsSetup) {
       openSetupWizard();
     }
   } catch (error) {
     console.error('セットアップウィザードの判定エラー:', error);
   }
+}
+
+/**
+ * 内部ヘルパー: デモモード時のみ、画面を離れる瞬間にリセットを試みる仕組みを1回だけ登録する
+ * sendBeaconは「ページを離れる瞬間でも、できる限り送信を試みる」ためのブラウザ標準の仕組み
+ * （確実性を高めるため、時間主導型トリガーによる自動リセットもバックエンド側に用意している）
+ */
+let _demoResetListenerAttached = false;
+function _setupDemoModeAutoReset() {
+  if (_demoResetListenerAttached) return;
+  _demoResetListenerAttached = true;
+
+  const sendResetBeacon = () => {
+    try {
+      const body = new Blob([JSON.stringify({ action: 'resetDemoData' })], { type: 'text/plain' });
+      navigator.sendBeacon(CONFIG.GAS_WEB_APP_URL, body);
+    } catch (e) {
+      // 送信に失敗しても、時間主導型トリガー側でいずれリセットされるので致命的ではない
+    }
+  };
+
+  window.addEventListener('pagehide', sendResetBeacon);
+  window.addEventListener('beforeunload', sendResetBeacon);
 }
 
 /**
