@@ -1597,35 +1597,35 @@ font-size: 14px;
 
 .wizard-radio-row {
 display: flex;
-gap: 20px;
+flex-wrap: wrap;
+gap: 8px 32px;
 
 margin-top: 6px;
 }
 
 .wizard-radio-row.wizard-radio-col {
 flex-direction: column;
-gap: 12px;
+flex-wrap: nowrap;
+gap: 16px;
 }
 
 .wizard-radio-row label {
-display: flex;
-align-items: flex-start;
-gap: 6px;
+display: grid;
+grid-template-columns: 18px 1fr;
+column-gap: 8px;
+align-items: start;
 
 font-size: 14px;
 line-height: 1.5;
+
+cursor: pointer;
 }
 
 .wizard-radio-row label input[type="radio"] {
-flex: 0 0 auto;
-
-margin-top: 3px;
+margin: 3px 0 0;
 }
 
 .wizard-radio-text {
-flex: 1 1 0;
-min-width: 0;
-
 white-space: normal;
 }
 
