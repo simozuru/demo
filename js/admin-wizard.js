@@ -172,6 +172,60 @@ if (wizardStep1NextBtn) {
 
 const wizardStep2BackBtn = document.getElementById('wizard-step2-back');
 const wizardStep2NextBtn = document.getElementById('wizard-step2-next');
+const wizardAddNthWeekdayBtn = document.getElementById('wizard-add-nth-weekday-btn');
+const wizardAddDateRangeBtn = document.getElementById('wizard-add-date-range-btn');
+
+const WIZARD_WEEKDAY_LABELS = ['日', '月', '火', '水', '木', '金', '土'];
+
+/**
+ * 「第○曜日」の定休日を1行追加する（毎週の定休日とは別の、変則的な休みのため）
+ */
+function addWizardNthWeekdayRow() {
+  const container = document.getElementById('wizard-nth-weekday-rows');
+  if (!container) return;
+
+  const row = document.createElement('div');
+  row.className = 'wizard-staff-row';
+  row.innerHTML = `
+    <span>第</span>
+    <select class="wizard-nth-select">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+    </select>
+    <select class="wizard-nth-weekday-select">
+      ${WIZARD_WEEKDAY_LABELS.map((label, i) => `<option value="${i}">${label}曜日</option>`).join('')}
+    </select>
+    <span>を休みにする</span>
+    <button type="button" class="btn-remove-row" title="削除">×</button>
+  `;
+  row.querySelector('.btn-remove-row').addEventListener('click', () => row.remove());
+  container.appendChild(row);
+}
+
+/**
+ * 「年末年始・夏季休暇」など、期間指定の休暇を1行追加する
+ */
+function addWizardDateRangeRow() {
+  const container = document.getElementById('wizard-date-range-rows');
+  if (!container) return;
+
+  const row = document.createElement('div');
+  row.className = 'wizard-staff-row';
+  row.innerHTML = `
+    <input type="text" class="wizard-date-range-label-input" placeholder="例：年末年始休業">
+    <input type="date" class="wizard-date-range-start-input">
+    <span>〜</span>
+    <input type="date" class="wizard-date-range-end-input">
+    <button type="button" class="btn-remove-row" title="削除">×</button>
+  `;
+  row.querySelector('.btn-remove-row').addEventListener('click', () => row.remove());
+  container.appendChild(row);
+}
+
+if (wizardAddNthWeekdayBtn) wizardAddNthWeekdayBtn.addEventListener('click', addWizardNthWeekdayRow);
+if (wizardAddDateRangeBtn) wizardAddDateRangeBtn.addEventListener('click', addWizardDateRangeRow);
 
 if (wizardStep2BackBtn) wizardStep2BackBtn.addEventListener('click', () => showWizardStep(1));
 
@@ -184,9 +238,28 @@ if (wizardStep2NextBtn) {
 
     const closedWeekdays = Array.from(document.querySelectorAll('.wizard-weekday-check:checked')).map(c => parseInt(c.value, 10));
 
+    const nthWeekdayClosures = Array.from(document.querySelectorAll('#wizard-nth-weekday-rows .wizard-staff-row')).map(row => ({
+      nth: parseInt(row.querySelector('.wizard-nth-select').value, 10),
+      weekday: parseInt(row.querySelector('.wizard-nth-weekday-select').value, 10)
+    }));
+
+    const dateRangeClosures = Array.from(document.querySelectorAll('#wizard-date-range-rows .wizard-staff-row'))
+      .map(row => ({
+        label: row.querySelector('.wizard-date-range-label-input').value.trim(),
+        startDate: row.querySelector('.wizard-date-range-start-input').value,
+        endDate: row.querySelector('.wizard-date-range-end-input').value
+      }))
+      .filter(range => range.startDate && range.endDate);
+
     const restore = _setWizardBtnBusy(wizardStep2NextBtn, '作成中...（定休日カレンダーを準備しています）');
     try {
-      const result = await callAdminApi('saveWizardStep2', { openTime: openTime, closeTime: closeTime, closedWeekdays: closedWeekdays });
+      const result = await callAdminApi('saveWizardStep2', {
+        openTime: openTime,
+        closeTime: closeTime,
+        closedWeekdays: closedWeekdays,
+        nthWeekdayClosures: nthWeekdayClosures,
+        dateRangeClosures: dateRangeClosures
+      });
       if (!result.success) throw new Error(result.message || '保存に失敗しました。');
       showWizardStep(3);
     } catch (error) {
@@ -213,7 +286,7 @@ function addWizardStaffRow() {
   const row = document.createElement('div');
   row.className = 'wizard-staff-row';
   row.innerHTML = `
-    <input type="text" class="wizard-staff-name-input" placeholder="例：山田 花子">
+    <input type="text" class="wizard-staff-name-input" placeholder="店名 もしくは氏名">
     <button type="button" class="btn-remove-row" title="削除">×</button>
   `;
   row.querySelector('.btn-remove-row').addEventListener('click', () => row.remove());
